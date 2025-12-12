@@ -1,5 +1,4 @@
-for i in range(0, 5):
-    if i == 5:
-        break
-else:
-    print("hi")
+a = ['a', 'b', 'c', 'a']
+
+indices = [i for i, x in enumerate(a) if x == "a"]
+print(indices)

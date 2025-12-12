@@ -2,9 +2,10 @@
 
 __author__ = "deine_mtrn, dein_nachname, 8724694, Tran"
 
+from operator import index
 
 # Katzen-Graph als Beispiel
-test_paths = [("A", "C", "D", "B", "E", "F"), ("A", "B", "D", "F")]
+test_paths = [("A", "C", "D", "B", "E"), ("A", "B", "D", "F")]
 cat_edges = {
     ("A", "B") : (3, 2),
     ("A", "C") : (1, 0),
@@ -23,19 +24,44 @@ cat_edges = {
 }
 
 
+def path_value(paths_list, edges_dict):
+    """
+    Sums up the costs and the fun on each path.
+    :param paths_list: a list containing tuples with nodes stored within
+    :param edges_dict: a dictionary containing edges and their respective cost and fun values
+    :returns: a list containing tuples with each path's summed up cost and fun
+    """
+    path_values = []
+    for i in paths_list:
+        my_path_value = [0, 0]
+        for j in range(0, len(i) - 1):
+            # Pair up every node along the path and find the respective edge.
+            edge_node1 = i[j]
+            edge_node2 = i[j + 1]
+            # Safe edge values from dictionary in new tuple.
+            edge_value = edges_dict[(edge_node1, edge_node2)]
+            # Sum up every path value.
+            for k in range(0, 2):
+                my_path_value[k] += edge_value[k]
+        # Add value of one path to list of path values.
+        path_values.append(tuple(my_path_value))
+    return path_values
+
+
 def pareto_optimal(paths_list, edges_dict):
     """
     Calculates a pareto optimal path.
     :param paths_list: a list containing tuples with nodes stored within
     :param edges_dict: a dictionary containing edges and their respective cost and fun values
+    :returns: a set of pareto optimal paths
     """
-    # First calculate a cost and fun values for each path
-    pareto_list = __path_value(paths_list,edges_dict)
-    print(pareto_list)  # just for debugging
+    # First calculate a cost and fun values for each path.
+    path_values = path_value(paths_list, edges_dict)
+    print(path_values)  # just for debugging
     optimal_paths = set()
     # Compare every path with every other path.
-    for i in pareto_list:
-        for j in pareto_list:
+    for i in path_values:
+        for j in path_values:
             # Make sure to not compare a path with itself or a path with another path of the same value.
             if i == j:
                 continue
@@ -49,28 +75,43 @@ def pareto_optimal(paths_list, edges_dict):
                 break
         else:
             # Add new path to set of pareto-optimal paths.
-            optimal_paths.add(i)
+            my_optimal_path = paths_list[path_values.index(i)]
+            optimal_paths.add(my_optimal_path)
     return optimal_paths
 
 
-def __path_value(paths_list, edges_dict):
+
+def weighted_sum(paths_list, edges_dict, cost_weight, fun_weight):
     """
-    Sums up the costs and the fun on each path.
+    Calculates an optimal path based on the weighted sum method.
     :param paths_list: a list containing tuples with nodes stored within
     :param edges_dict: a dictionary containing edges and their respective cost and fun values
+    :param cost_weight: a number value determining the weight of an edge's cost value
+    :param fun_weight: a number value determining the weight of an edge's fun value
+    :return: a set of optimal paths
     """
-    pareto_values = []
-    for i in paths_list:
-        path_pareto_value = [0, 0]
-        for j in range(0, len(i) - 1):
-            edge_node1 = i[j]
-            edge_node2 = i[j + 1]
-            edge_value = edges_dict[(edge_node1, edge_node2)]
-            for k in range(0, 2):
-                path_pareto_value[k] += edge_value[k]
-        pareto_values.append(tuple(path_pareto_value))
-    return pareto_values
+    # First calculate a cost and fun values for each path.
+    paths_values = path_value(paths_list, edges_dict)
+    optimal_paths = set()
+    paths_weighted_sums = []
+    # Calculate a value for each path (weighted sum). The smallest value is optimal.
+    for paths in paths_values:
+        # Multiply by a factor based on each value's weight.
+        weighted_cost = paths[0] * cost_weight
+        weighted_fun = -paths[1] * fun_weight
+        my_weighted_sum = weighted_cost + weighted_fun
+        print(my_weighted_sum)  # debugging
+        # Add calculated sum to list of all weighted sums.
+        paths_weighted_sums.append(my_weighted_sum)
+    # Check for every sum in list if it is the smallest value.
+    for i in range(0, len(paths_weighted_sums)):
+        if paths_weighted_sums[i] == min(paths_weighted_sums):
+            # Add path with the same index to set of optimal paths.
+            optimal_paths.add(paths_list[i])
+    return optimal_paths
 
 
 print(test_paths)
 print(pareto_optimal(test_paths, cat_edges))
+print()
+print(weighted_sum(test_paths, cat_edges, 10, 1))
