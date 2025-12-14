@@ -110,7 +110,9 @@ def weighted_sum(paths_list, edges_dict, cost_weight, fun_weight):
     return optimal_paths
 
 
-print(test_paths)
-print(pareto_optimal(test_paths, cat_edges))
-print()
-print(weighted_sum(test_paths, cat_edges, 10, 1))
+
+if __name__ == "__main__":
+    print(test_paths)
+    print(pareto_optimal(test_paths, cat_edges))
+    print()
+    print(weighted_sum(test_paths, cat_edges, 10, 1))
