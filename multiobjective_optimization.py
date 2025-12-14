@@ -2,7 +2,6 @@
 
 __author__ = "deine_mtrn, dein_nachname, 8724694, Tran"
 
-from operator import index
 
 # Katzen-Graph als Beispiel
 test_paths = [("A", "C", "D", "B", "E"), ("A", "B", "D", "F")]
