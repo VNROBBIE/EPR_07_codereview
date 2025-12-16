@@ -1,10 +1,16 @@
-"""Contains three methods for different types of multiobjective optimization in a graph."""
+"""
+Contains three methods for different types of multiobjective optimization in a graph.
+Assume a graph and a list of possible paths already exists.
+"""
 
 __author__ = "deine_mtrn, dein_nachname, 8724694, Tran"
 
+import doctest
 
-# Katzen-Graph als Beispiel
-test_paths = [("A", "C", "D", "F"), ("A", "B", "D", "F"), ("A", "B", "E", "F")]
+
+test_paths1 = [("A", "C", "D", "F"), ("A", "B", "D", "F"), ("A", "B", "E", "F")]
+test_paths2 = [("A", "C", "D", "B", "E", "F"), ("A", "B", "D", "F")]
+test_paths3 = [("A", "B", "D"), ("A", "C", "D")]
 cat_edges = {
     ("A", "B") : (3, 2),
     ("A", "C") : (1, 0),
@@ -26,24 +32,38 @@ cat_edges = {
 def path_value(paths_list, edges_dict):
     """
     Sums up the costs and the fun on each path.
-    :param paths_list: a list containing tuples with nodes stored within
+    :param paths_list: a list containing tuples with nodes stored within to represent paths
     :param edges_dict: a dictionary containing edges and their respective cost and fun values
     :return: a list containing tuples with each path's summed up cost and fun
+    >>> path_value(test_paths1, cat_edges)
+    [(6, 7), (10, 11), (10, 3)]
+    >>> path_value(test_paths2, cat_edges)
+    [(14, 9), (10, 11)]
+    >>> path_value(test_paths3, cat_edges)
+    [(7, 7), (3, 3)]
+    >>> path_value([("A", "B")], {("A", "C") : (3, 2)})
+    Atleast one path is invalid.
     """
     path_values = []
     for i in paths_list:
         my_path_value = [0, 0]
         for j in range(0, len(i) - 1):
-            # Pair up every node along the path and find the respective edge.
+            # Pair up every node on the path and find the respective edge in edge dictionary.
             edge_node1 = i[j]
             edge_node2 = i[j + 1]
-            # Safe edge values from dictionary in new tuple.
-            edge_value = edges_dict[(edge_node1, edge_node2)]
+            # Check if path is connected by edges and safe edge values from dictionary in new tuple.
+            try:
+                edge_value = edges_dict[(edge_node1, edge_node2)]
+            except KeyError:
+                print("Atleast one path is invalid.")
+                return None
             # Sum up every path value.
             for k in range(0, 2):
                 my_path_value[k] += edge_value[k]
         # Add value of one path to list of path values.
         path_values.append(tuple(my_path_value))
+    if len(path_values) == 0:
+        return None
     return path_values
 
 
@@ -53,29 +73,41 @@ def pareto_optimal(paths_list, edges_dict):
     :param paths_list: a list containing tuples with nodes stored within
     :param edges_dict: a dictionary containing edges and their respective cost and fun values
     :return: a set of pareto optimal paths
+    >>> pareto_optimal(test_paths1, cat_edges) == {('A', 'B', 'D', 'F'), ('A', 'C', 'D', 'F')}
+    True
+    >>> pareto_optimal(test_paths2, cat_edges) == {('A', 'B', 'D', 'F')}
+    True
+    >>> pareto_optimal(test_paths3, cat_edges) == {('A', 'C', 'D'), ('A', 'B', 'D')}
+    True
+    >>> pareto_optimal([], cat_edges)
     """
     # First calculate the cost and fun values for each path.
-    path_values = path_value(paths_list, edges_dict)
-    print(path_values)  # just for debugging
+    paths_values = path_value(paths_list, edges_dict)
+    # Check if path is valid.
+    if paths_values is None:
+        return None
     optimal_paths = set()
     # Compare every path with every other path.
-    for i in path_values:
-        for j in path_values:
+    for path1 in paths_values:
+        for path2 in paths_values:
             # Make sure to not compare a path with itself or a path with another path of the same value.
-            if i == j:
+            if path1 == path2:
                 continue
-            current_cost_value = j[0]
-            current_fun_value = j[1]
-            new_cost_value = i[0]
-            new_fun_value = i[1]
+            current_cost_value = path2[0]
+            current_fun_value = path2[1]
+            new_cost_value = path1[0]
+            new_fun_value = path1[1]
             # Every path must not be worse than any of other paths in both goals.
             # Cost must be low and fun must be high.
             if new_cost_value > current_cost_value and new_fun_value < current_fun_value:
                 break
         else:
             # Add new path to set of pareto-optimal paths.
-            my_optimal_path = paths_list[path_values.index(i)]
+            my_optimal_path = paths_list[paths_values.index(path1)]
             optimal_paths.add(my_optimal_path)
+    # Check if optimal path exists.
+    if len(optimal_paths) == 0:
+        return None
     return optimal_paths
 
 
@@ -90,9 +122,25 @@ def weighted_sum(paths_list, edges_dict, cost_weight, fun_weight):
     :param cost_weight: a number value determining the weight of an edge's cost value
     :param fun_weight: a number value determining the weight of an edge's fun value
     :return: a set of optimal paths
+    >>> weighted_sum(test_paths1, cat_edges, 1, 1) == {('A', 'C', 'D', 'F'), ('A', 'B', 'D', 'F')}
+    True
+    >>> weighted_sum(test_paths1, cat_edges, 5, 1) == {('A', 'C', 'D', 'F')}
+    True
+    >>> weighted_sum(test_paths1, cat_edges, 1, 5) == {('A', 'B', 'D', 'F')}
+    True
+    >>> weighted_sum(test_paths1, cat_edges, "hi", "n")
     """
     # First calculate the cost and fun values for each path.
     paths_values = path_value(paths_list, edges_dict)
+    # Check if path is valid
+    if paths_values is None:
+        return None
+    # Check if number was entered for cost and fun weights.
+    try:
+        float(fun_weight)
+        float(cost_weight)
+    except ValueError:
+        print("Weight factors must be numbers.")
     optimal_paths = set()
     paths_weighted_sums = []
     # Calculate a value for each path (weighted sum). The smallest value is optimal.
@@ -101,7 +149,6 @@ def weighted_sum(paths_list, edges_dict, cost_weight, fun_weight):
         weighted_cost = paths[0] * cost_weight
         weighted_fun = -paths[1] * fun_weight
         my_weighted_sum = weighted_cost + weighted_fun
-        print(my_weighted_sum)  # debugging
         # Add calculated sum to list of all weighted sums.
         paths_weighted_sums.append(my_weighted_sum)
     # Check for every sum in list if it is the smallest value.
@@ -109,6 +156,7 @@ def weighted_sum(paths_list, edges_dict, cost_weight, fun_weight):
         if paths_weighted_sums[i] == min(paths_weighted_sums):
             # Add path with the same index to set of optimal paths.
             optimal_paths.add(paths_list[i])
+    # Check if optimal path exists.
     return optimal_paths
 
 
@@ -119,50 +167,55 @@ def epsilon_constraint(paths_list, edges_dict, main_goal, sec_goal_value):
     :param paths_list: a list containing tuples with nodes stored within
     :param edges_dict: a dictionary containing edges and their respective cost and fun values
     :param main_goal: a string containing the main goal of the algorithm ("cost"/"fun")
-    :param sec_goal_value: a string containing either maximum cost/minimum fun to meet the secondary goal
-    :return: a set of optimal paths.
+    :param sec_goal_value: a string containing either maximum cost or minimum fun to meet the secondary goal
+    :return: a set of optimal paths
+    >>> epsilon_constraint(test_paths1, cat_edges, "cost", 8) == {('A', 'B', 'D', 'F')}
+    True
+    >>> epsilon_constraint(test_paths1, cat_edges, "fun", 7) == {('A', 'C', 'D', 'F')}
+    True
+    >>> epsilon_constraint(test_paths1, cat_edges, "cost", 50)  # negative-Test
     """
     # Make sure goal is either cost or fun.
     if main_goal not in ("cost", "fun"):
         raise ValueError("Value has to be 'cost' or 'fun'")
     # First calculate the cost and fun values for each path.
     paths_values = path_value(paths_list, edges_dict)
+    if paths_values is None:
+        return None
+    # Check if number was entered for cost and fun weights.
+    try:
+        float(sec_goal_value)
+    except ValueError:
+        print("Minimum requirement for secondary goal must be a number.")
     optimal_paths = set()
     paths_sec_goal_fulfilled = []
     paths_main_goal_values = []
-    # Check what main goal is set.
-    if main_goal == "cost":
-        for i in paths_values:
-            # Check if path fulfills secondary goal.
-            if i[1] >= sec_goal_value:
-                paths_main_goal_values.append(i[0])
-                paths_sec_goal_fulfilled.append(i)
-                # Check which path has the lowest cost.
-        for j in paths_sec_goal_fulfilled:
-            if j[0] == min(paths_main_goal_values):
-                # Add path to set of optimal paths.
-                optimal_path_index = paths_values.index(j)
-                my_optimal_path = paths_list[optimal_path_index]
-                optimal_paths.add(my_optimal_path)
-    else:
-        for i in paths_values:
-            if i[0] <= sec_goal_value:
-                paths_main_goal_values.append(i[1])
-                paths_sec_goal_fulfilled.append(i)
-                # Check which path has the highest fun.
-        for j in paths_sec_goal_fulfilled:
-            max_fun = max(paths_main_goal_values)
-            if j[1] == max_fun:
-                optimal_path_index = paths_values.index(j)
-                my_optimal_path = paths_list[optimal_path_index]
-                optimal_paths.add(my_optimal_path)
+    for values in paths_values:
+        # Check what main goal is set and if path fulfills secondary goal.
+        if main_goal == "cost" and values[1] >= sec_goal_value:
+            paths_main_goal_values.append(values[0])
+            paths_sec_goal_fulfilled.append(values)
+        elif main_goal == "fun" and values[0] <= sec_goal_value:
+            paths_main_goal_values.append(values[1])
+            paths_sec_goal_fulfilled.append(values)
+    # Check which path has the lowest cost/highest fun.
+    for paths in paths_sec_goal_fulfilled:
+        if (main_goal == "cost" and paths[0] == min(paths_main_goal_values) or
+                main_goal == "fun" and paths[1] == max(paths_main_goal_values)):
+            # Add path to set of optimal paths.
+            optimal_path_index = paths_values.index(paths)
+            my_optimal_path = paths_list[optimal_path_index]
+            optimal_paths.add(my_optimal_path)
+    # Check if optimal path exists.
+    if len(optimal_paths) == 0:
+        return None
     return optimal_paths
 
 
 if __name__ == "__main__":
-    print(test_paths)
-    print(pareto_optimal(test_paths, cat_edges))
+    print(test_paths1)
+    print(pareto_optimal(test_paths1, cat_edges))
     print()
-    print(weighted_sum(test_paths, cat_edges, 10, 1))
+    print(weighted_sum(test_paths1, cat_edges, 10, 1))
     print()
-    print(epsilon_constraint(test_paths, cat_edges, "cost", 1))
+    print(epsilon_constraint(test_paths1, cat_edges, "cost", 50))
