@@ -2,12 +2,27 @@
 Recursive algorithm to find the optimal path in a graph
 with cost and fun (Ablenkungswert) values.
 """
-
+import doctest
 
 def optimize_weighted(cost, fun, weight_cost=1, weight_fun=1):
     """
     Weighted sum function to combine cost and fun.
     Lower score(the result) is better.
+
+    Normal cases:
+    >>> optimize_weighted(10, 5)
+    5
+    >>> optimize_weighted(6, 7, 10, 1)
+    53
+
+
+    Negative case (invalid input):
+
+    >>> optimize_weighted("10", 5)
+    Traceback (most recent call last):
+    TypeError: unsupported operand type(s) for -: 'str' and 'int'
+
+
     """
     return cost * weight_cost - fun * weight_fun
 
@@ -44,7 +59,18 @@ def recursive_best_path(
     """
     Recursively finds the optimal path according to a given optimization function.
 
-    :return: (best_path, total_cost, total_fun) or None
+    >>> result = recursive_best_path("A", "F", cat_edges, optimize_weighted)
+    >>> result[0][0]
+    'A'
+    >>> result[0][-1]
+    'F'
+
+    >>> recursive_best_path("A", "A", cat_edges, optimize_weighted)[0]
+    ['A']
+
+    >>> recursive_best_path("A", "Z", cat_edges, optimize_weighted) is None
+    True
+
     """
     if path is None:
         path = [current]
@@ -113,5 +139,4 @@ if __name__ == "__main__":
     result = recursive_best_path("A", "Z", cat_edges, optimize_weighted)
     assert result is None
     print("Test 3 passed: No path found")
-
 

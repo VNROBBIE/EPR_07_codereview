@@ -3,8 +3,6 @@ Contains three methods for different types of multiobjective optimization in a g
 Assume a graph and a list of possible paths already exists.
 """
 
-__author__ = "deine_mtrn, dein_nachname, 8724694, Tran"
-
 import doctest
 
 
