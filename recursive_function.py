@@ -2,6 +2,7 @@
 Recursive algorithm to find the optimal path in a graph
 with cost and fun (Ablenkungswert) values.
 """
+__author__ = "8249067, Sanchez, 8724694, Tran, 8572770, Kesidis"
 
 
 def optimize_weighted(cost, fun, weight_cost=1, weight_fun=1):

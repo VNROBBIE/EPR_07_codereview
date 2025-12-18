@@ -2,6 +2,7 @@
 Three methods for different types of multiobjective optimization in a graph.
 For test purposes, assume a graph and a list of possible paths already exists.
 """
+__author__ = "8249067, Sanchez, 8724694, Tran, 8572770, Kesidis"
 
 import doctest
 

@@ -1,6 +1,7 @@
 """
 Time measurement using timeit.
 """
+__author__ = "8249067, Sanchez, 8724694, Tran, 8572770, Kesidis"
 
 import timeit
 

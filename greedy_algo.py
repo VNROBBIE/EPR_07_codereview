@@ -1,6 +1,6 @@
 """Find a path using the greedy-algorithm"""
 
-__author__ = "deine_mtrn, dein_nachname, 8724694, Tran"
+__author__ = "8249067, Sanchez, 8724694, Tran, 8572770, Kesidis"
 
 import doctest
 from multiobjective_optimization import path_value
