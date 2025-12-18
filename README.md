@@ -23,7 +23,7 @@ Das Projekt ist in mehrere Module aufgeteilt, die unterschiedliche Lösungsansä
 
 Der Graph wird als Dictionary dargestellt und bei den Rekursive und Greedy Algorithmen benutzt.
 
-cat_edges = {
+CAT_EDGES = {
     ("A", "B") : (3, 2),
     ("A", "C") : (1, 0), etc...
     }
@@ -36,7 +36,7 @@ cat_edges = {
 
 -----------------
 
-test_paths = [("A", "C", "D", "B", "E"), ("A", "B", "D", "F")
+TEST_PATHS = [("A", "C", "D", "B", "E"), ("A", "B", "D", "F")
 
 Diese Liste von Tupeln entspricht vorgegebenen Wege die von den 3 Optimierungsfunktionen als Argument genommen werden
 ---------------------------------------------------------------------------

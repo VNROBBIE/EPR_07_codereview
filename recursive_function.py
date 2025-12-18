@@ -2,7 +2,7 @@
 Recursive algorithm to find the optimal path in a graph
 with cost and fun (Ablenkungswert) values.
 """
-import doctest
+
 
 def optimize_weighted(cost, fun, weight_cost=1, weight_fun=1):
     """
@@ -28,7 +28,7 @@ def optimize_weighted(cost, fun, weight_cost=1, weight_fun=1):
 
 
 # Example graph
-cat_edges = {
+CAT_EDGES = {
     ("A", "B"): (3, 2),
     ("A", "C"): (1, 0),
     ("B", "A"): (1, 0),
@@ -57,18 +57,18 @@ def recursive_best_path(
     visited=None
 ):
     """
-    Recursively finds the optimal path according to a given optimization function.
-
-    >>> result = recursive_best_path("A", "F", cat_edges, optimize_weighted)
+    Recursively finds the optimal path
+    according to a given optimization function.
+    >>> result = recursive_best_path("A", "F", CAT_EDGES, optimize_weighted)
     >>> result[0][0]
     'A'
     >>> result[0][-1]
     'F'
 
-    >>> recursive_best_path("A", "A", cat_edges, optimize_weighted)[0]
+    >>> recursive_best_path("A", "A", CAT_EDGES, optimize_weighted)[0]
     ['A']
 
-    >>> recursive_best_path("A", "Z", cat_edges, optimize_weighted) is None
+    >>> recursive_best_path("A", "Z", CAT_EDGES, optimize_weighted) is None
     True
 
     """
@@ -116,11 +116,10 @@ def recursive_best_path(
     return best_result
 
 
-
 if __name__ == "__main__":
 
     # Test 1: normal case
-    result = recursive_best_path("A", "F", cat_edges, optimize_weighted)
+    result = recursive_best_path("A", "F", CAT_EDGES, optimize_weighted)
     assert result is not None
     path, cost, fun = result
     assert path[0] == "A"
@@ -128,7 +127,7 @@ if __name__ == "__main__":
     print("Test 1 passed:", path, cost, fun)
 
     # Test 2: reach direct neighbor
-    result = recursive_best_path("A", "B", cat_edges, optimize_weighted)
+    result = recursive_best_path("A", "B", CAT_EDGES, optimize_weighted)
     assert result is not None
     path, cost, fun = result
     assert path[0] == "A"
@@ -136,7 +135,6 @@ if __name__ == "__main__":
     print("Test 2 passed:", path, cost, fun)
 
     # Test 3: negative test
-    result = recursive_best_path("A", "Z", cat_edges, optimize_weighted)
+    result = recursive_best_path("A", "Z", CAT_EDGES, optimize_weighted)
     assert result is None
     print("Test 3 passed: No path found")
-

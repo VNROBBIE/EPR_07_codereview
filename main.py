@@ -10,7 +10,8 @@ This file connects all parts of the project:
 __author__ = "8249067, Sanchez, 8724694, Tran"
 
 # Import optimization methods modul
-from multiobjective_optimization import path_value, pareto_optimal, weighted_sum, epsilon_constraint
+from multiobjective_optimization import (
+    path_value, pareto_optimal, weighted_sum, epsilon_constraint)
 
 
 # Import recursive algorithm modul
@@ -18,48 +19,48 @@ from recursive_function import recursive_best_path, optimize_weighted
 
 
 # Import greedy algorithm
-#todo
+from greedy_algo import greedy_best_path
 
 # Import time measurement modul
 from time_measurement import measure_recursive_time, measure_greedy_time
 
 
-test_paths1 = [("A", "C", "D", "F"), ("A", "B", "D", "F"), ("A", "B", "E", "F")]
-test_paths2 = [("A", "C", "D", "B", "E", "F"), ("A", "B", "D", "F")]
-test_paths3 = [("A", "B", "D"), ("A", "C", "D")]
-cat_edges = {
-    ("A", "B") : (3, 2),
-    ("A", "C") : (1, 0),
-    ("B", "A") : (1, 0),
-    ("B", "D") : (4, 5),
-    ("B", "E") : (2, 1),
-    ("C", "A") : (1, 0),
-    ("C", "D") : (2, 3),
-    ("D", "B") : (4, 5),
-    ("D", "C") : (2, 3),
-    ("D", "F") : (3, 4),
-    ("E", "B") : (2, 1),
-    ("E", "F") : (5, 0),
-    ("F", "D") : (3, 4),
-    ("F", "E") : (5, 0)
+TEST_PATHS1 = [("A", "C", "D", "F"), ("A", "B", "D", "F"),
+               ("A", "B", "E", "F")]
+TEST_PATHS2 = [("A", "C", "D", "B", "E", "F"), ("A", "B", "D", "F")]
+TEST_PATHS3 = [("A", "B", "D"), ("A", "C", "D")]
+CAT_EDGES = {
+    ("A", "B"): (3, 2),
+    ("A", "C"): (1, 0),
+    ("B", "A"): (1, 0),
+    ("B", "D"): (4, 5),
+    ("B", "E"): (2, 1),
+    ("C", "A"): (1, 0),
+    ("C", "D"): (2, 3),
+    ("D", "B"): (4, 5),
+    ("D", "C"): (2, 3),
+    ("D", "F"): (3, 4),
+    ("E", "B"): (2, 1),
+    ("E", "F"): (5, 0),
+    ("F", "D"): (3, 4),
+    ("F", "E"): (5, 0)
 }
 
 
 def run_optimizations():
     print("\n--- Optimization Methods ---")
-    print(test_paths1)
+    print(TEST_PATHS1)
     print("path values: ")
-    print(path_value(test_paths1, cat_edges))
+    print(path_value(TEST_PATHS1, CAT_EDGES))
     print()
     print("pareto_optimal: ")
-    print(pareto_optimal(test_paths1, cat_edges))
+    print(pareto_optimal(TEST_PATHS1, CAT_EDGES))
     print()
     print("weighted_sum: ")
-    print(weighted_sum(test_paths1, cat_edges, 10, 1))
+    print(weighted_sum(TEST_PATHS1, CAT_EDGES, 10, 1))
     print()
     print("epsilon-constraint: ")
-    print(epsilon_constraint(test_paths1, cat_edges, "cost", 50))
-
+    print(epsilon_constraint(TEST_PATHS1, CAT_EDGES, "cost", 50))
 
 
 def run_recursive():
@@ -68,7 +69,7 @@ def run_recursive():
     start = "A"
     goal = "F"
 
-    result = recursive_best_path(start, goal, cat_edges, optimize_weighted)
+    result = recursive_best_path(start, goal, CAT_EDGES, optimize_weighted)
 
     if result is None:
         print("No path found.")
@@ -79,13 +80,13 @@ def run_recursive():
         print("Total fun:", fun)
 
 
-def run_greedy():
+def run_greedy(focus):
     print("\n--- Greedy Path Algorithm ---")
 
     start = "A"
     goal = "F"
 
-    result = greedy_best_path(start, goal, cat_edges)
+    result = greedy_best_path(start, goal, CAT_EDGES, focus)
 
     if result is None:
         print("No path found.")
@@ -114,7 +115,8 @@ def main():
         print("1 - Run optimization methods")
         print("2 - Run recursive path algorithm")
         print("3 - Run greedy path algorithm")
-        print("4 - Run time measurements for the recursive and greedy algorithm")
+        print("4 - Run time measurements for"
+              " the recursive and greedy algorithm")
         print("0 - Exit")
 
         choice = input("Choose an option: ")
@@ -124,7 +126,12 @@ def main():
         elif choice == "2":
             run_recursive()
         elif choice == "3":
-            run_greedy()
+            print("The greedy algorithm can only focus on one goal.")
+            while True:
+                greedy_focus = input("Choose either 'cost' or 'fun': ")
+                if greedy_focus in ("cost", "fun"):
+                    run_greedy(greedy_focus)
+                    break
         elif choice == "4":
             run_measurements()
         elif choice == "0":
@@ -136,5 +143,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

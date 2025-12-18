@@ -1,16 +1,16 @@
 """
 Three methods for different types of multiobjective optimization in a graph.
-Assume a graph and a list of possible paths already exists.
+For test purposes, assume a graph and a list of possible paths already exists.
 """
 
 import doctest
 
 
-test_paths1 = [("A", "C", "D", "F"), ("A", "B", "D", "F"),
+TEST_PATHS1 = [("A", "C", "D", "F"), ("A", "B", "D", "F"),
                ("A", "B", "E", "F")]
-test_paths2 = [("A", "C", "D", "B", "E", "F"), ("A", "B", "D", "F")]
-test_paths3 = [("A", "B", "D"), ("A", "C", "D")]
-cat_edges = {
+TEST_PATHS2 = [("A", "C", "D", "B", "E", "F"), ("A", "B", "D", "F")]
+TEST_PATHS3 = [("A", "B", "D"), ("A", "C", "D")]
+CAT_EDGES = {
     ("A", "B"): (3, 2),
     ("A", "C"): (1, 0),
     ("B", "A"): (1, 0),
@@ -35,12 +35,12 @@ def path_value(paths_list, edges_dict):
     nodes stored within to represent paths
     :param edges_dict: a dictionary containing edges
     and their respective cost and fun values
-    :return: a list containing tuples with each path's summed up cost and fun
-    >>> path_value(test_paths1, cat_edges)
+    :return: a list containing tuples with each path's total cost and fun
+    >>> path_value(TEST_PATHS1, CAT_EDGES)
     [(6, 7), (10, 11), (10, 3)]
-    >>> path_value(test_paths2, cat_edges)
+    >>> path_value(TEST_PATHS2, CAT_EDGES)
     [(14, 9), (10, 11)]
-    >>> path_value(test_paths3, cat_edges)
+    >>> path_value(TEST_PATHS3, CAT_EDGES)
     [(7, 7), (3, 3)]
     >>> path_value([("A", "B")], {("A", "C") : (3, 2)})
     Atleast one path is invalid.
@@ -80,15 +80,15 @@ def pareto_optimal(paths_list, edges_dict):
     :param edges_dict: a dictionary containing edges
     and their respective cost and fun values
     :return: a set of pareto optimal paths
-    >>> (pareto_optimal(test_paths1, cat_edges) ==
+    >>> (pareto_optimal(TEST_PATHS1, CAT_EDGES) ==
     ...     {('A', 'B', 'D', 'F'), ('A', 'C', 'D', 'F')})
     True
-    >>> pareto_optimal(test_paths2, cat_edges) == {('A', 'B', 'D', 'F')}
+    >>> pareto_optimal(TEST_PATHS2, CAT_EDGES) == {('A', 'B', 'D', 'F')}
     True
-    >>> (pareto_optimal(test_paths3, cat_edges)
+    >>> (pareto_optimal(TEST_PATHS3, CAT_EDGES)
     ...     == {('A', 'C', 'D'), ('A', 'B', 'D')})
     True
-    >>> pareto_optimal([], cat_edges)
+    >>> pareto_optimal([], CAT_EDGES)
     """
     # First calculate the cost and fun values for each path.
     paths_values = path_value(paths_list, edges_dict)
@@ -138,14 +138,14 @@ def weighted_sum(paths_list, edges_dict, cost_weight, fun_weight):
     :param fun_weight: a number value determining
     the weight of an edge's fun value
     :return: a set of optimal paths
-    >>> (weighted_sum(test_paths1, cat_edges, 1, 1)
+    >>> (weighted_sum(TEST_PATHS1, CAT_EDGES, 1, 1)
     ...     == {('A', 'C', 'D', 'F'), ('A', 'B', 'D', 'F')})
     True
-    >>> weighted_sum(test_paths1, cat_edges, 5, 1) == {('A', 'C', 'D', 'F')}
+    >>> weighted_sum(TEST_PATHS1, CAT_EDGES, 5, 1) == {('A', 'C', 'D', 'F')}
     True
-    >>> weighted_sum(test_paths1, cat_edges, 1, 5) == {('A', 'B', 'D', 'F')}
+    >>> weighted_sum(TEST_PATHS1, CAT_EDGES, 1, 5) == {('A', 'B', 'D', 'F')}
     True
-    >>> weighted_sum(test_paths1, cat_edges, "hi", "n")
+    >>> weighted_sum(TEST_PATHS1, CAT_EDGES, "hi", "n")
     Weight factors must be numbers.
     """
     # First calculate the cost and fun values for each path.
@@ -192,13 +192,13 @@ def epsilon_constraint(paths_list, edges_dict, main_goal, sec_goal_value):
     :param sec_goal_value: a string containing either maximum cost
     or minimum fun to meet the secondary goal
     :return: a set of optimal paths
-    >>> (epsilon_constraint(test_paths1, cat_edges, "cost", 8)
+    >>> (epsilon_constraint(TEST_PATHS1, CAT_EDGES, "cost", 8)
     ...    == {('A', 'B', 'D', 'F')})
     True
-    >>> (epsilon_constraint(test_paths1, cat_edges, "fun", 7)
+    >>> (epsilon_constraint(TEST_PATHS1, CAT_EDGES, "fun", 7)
     ...    == {('A', 'C', 'D', 'F')})
     True
-    >>> epsilon_constraint(test_paths1, cat_edges, "cost", 50)  # negative-Test
+    >>> epsilon_constraint(TEST_PATHS1, CAT_EDGES, "cost", 50)  # negative-Test
     """
     # Make sure goal is either cost or fun.
     if main_goal not in ("cost", "fun"):
