@@ -5,6 +5,7 @@ Time measurement using timeit.
 import timeit
 
 from recursive_function import recursive_best_path, optimize_weighted
+from greedy_algo import greedy_best_path
 from multiobjective_optimization import CAT_EDGES
 
 
@@ -17,7 +18,7 @@ def measure_recursive_time():
 
 def measure_greedy_time():
     return timeit.timeit(
-        lambda: None,
+        lambda: greedy_best_path(CAT_EDGES, "A", "F", "cost"),
         number=10000
     )
 

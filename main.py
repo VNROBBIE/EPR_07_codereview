@@ -7,7 +7,7 @@ This file connects all parts of the project:
 - greedy path finding
 - time measurement
 """
-__author__ = "8249067, Sanchez, 8724694, Tran"
+__author__ = "8249067, Sanchez, 8724694, Tran, 8572770, Kesidis"
 
 # Import optimization methods modul
 from multiobjective_optimization import (
